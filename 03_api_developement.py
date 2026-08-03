@@ -29,7 +29,7 @@ st.divider()
 # Input form
 st.subheader("Tell us about yourself")
 
- with st.form("risk_form"):
+with st.form("risk_form"):
     col1, col2 = st.columns(2)
  
     with col1:
@@ -80,9 +80,9 @@ st.subheader("Tell us about yourself")
  
     submitted = st.form_submit_button("Get My Risk Assessment", use_container_width=True)
 
-# ---------------------------------------------------------------------------
+
+
 # Handle submission
-# ---------------------------------------------------------------------------
 if submitted:
     payload = {
         "HighBP": high_bp,
