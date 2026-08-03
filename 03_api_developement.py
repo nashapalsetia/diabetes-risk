@@ -28,7 +28,6 @@ st.divider()
 
 # Input form
 st.subheader("Tell us about yourself")
-
 with st.form("risk_form"):
     col1, col2 = st.columns(2)
  
