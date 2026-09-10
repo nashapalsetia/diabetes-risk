@@ -1,8 +1,8 @@
 """Streamlit front end for the diabetes risk indicator.
 
-Talks to the API in 03_api_development.py. Start it from the project root:
+Talks to the API in src/api.py. Start it from the project root:
 
-    streamlit run 04_streamlit_app.py
+    streamlit run src/app.py
 
 Step 4 of the pipeline: 01 EDA -> 02 model engineering -> 03 API -> 04 Streamlit app.
 """
@@ -136,7 +136,7 @@ if submitted:
     except requests.exceptions.ConnectionError:
         st.error(
             "Couldn't reach the prediction API. Start it from the project root "
-            "with `uvicorn 03_api_development:app --reload`."
+            "with `uvicorn src.api:app --reload`."
         )
     except requests.exceptions.HTTPError as e:
         st.error(f"The API returned an error: {e}")

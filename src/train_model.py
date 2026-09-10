@@ -1,15 +1,17 @@
 """Train the final model and save it to disk.
 
-This is a script version of the final cells of 02_model_engineering.ipynb — the
-tuned multinomial Logistic Regression selected by GridSearchCV. It is a helper
-rather than a numbered pipeline step: it exists so the model can be rebuilt in
-one command, without opening the notebook.
+This is a script version of the final cells of notebooks/02_model_engineering.ipynb
+— the tuned multinomial Logistic Regression selected by GridSearchCV. It is a
+helper rather than a numbered pipeline step: it exists so the model can be
+rebuilt in one command, without opening the notebook.
 
-Run it once to produce models/diabetes_model.joblib, which 03_api_development.py
-loads at startup:
+Run it once to produce models/diabetes_model.joblib, which src/api.py loads at
+startup:
 
-    python train_model.py
+    python src/train_model.py
 """
+
+from pathlib import Path
 
 import joblib
 import numpy as np
@@ -20,8 +22,11 @@ from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.utils.class_weight import compute_class_weight
 
-DATA_PATH = "diabetes_012_health_indicators_BRFSS2015.csv"
-MODEL_PATH = "models/diabetes_model.joblib"
+# Anchored to the project root rather than the working directory, so the script
+# produces the same result no matter where it is invoked from.
+ROOT = Path(__file__).resolve().parent.parent
+DATA_PATH = ROOT / "data" / "diabetes_012_health_indicators_BRFSS2015.csv"
+MODEL_PATH = ROOT / "models" / "diabetes_model.joblib"
 
 # The API must send features in exactly this order — it is saved alongside the
 # model so the two can never drift apart.
