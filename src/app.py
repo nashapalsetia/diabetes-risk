@@ -28,7 +28,7 @@ st.title("🩺 Diabetes Risk Indicator")
 st.write(
     "This tool estimates diabetes risk category based on self-reported "
     "lifestyle and health factors, using a model trained on CDC BRFSS survey "
-    "data. **This is not a medical diagnosis** — it's an educational, "
+    "data. **This is not a medical diagnosis.** It's an educational, "
     "awareness-focused estimate. Please consult a healthcare professional "
     "for an accurate assessment."
 )
@@ -43,12 +43,12 @@ with st.form("risk_form"):
  
     with col1:
         high_bp = st.selectbox(
-            "Have you been told you have high blood pressure?",
+            "Have you ever been diagnosed with high blood pressure?",
             options=[0, 1],
             format_func=lambda x: "Yes" if x == 1 else "No",
         )
         high_chol = st.selectbox(
-            "Have you been told you have high cholesterol?",
+            "Have you been diagnosed with high cholesterol?",
             options=[0, 1],
             format_func=lambda x: "Yes" if x == 1 else "No",
         )
