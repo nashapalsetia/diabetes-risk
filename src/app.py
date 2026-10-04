@@ -154,9 +154,10 @@ st.write(
 )
 st.markdown(
     """
-- [CDC — Diabetes Basics](https://www.cdc.gov/diabetes/basics/index.html)
-- [CDC — Prediabetes: Your Chance to Prevent Type 2 Diabetes](https://www.cdc.gov/diabetes/basics/prediabetes.html)
-- [American Diabetes Association — Risk Test](https://diabetes.org/about-diabetes/risk-test)
+- [CDC — Diabetes Basics](https://www.cdc.gov/diabetes/about/)
+- [CDC — Prediabetes Risk Test](https://www.cdc.gov/prediabetes/risktest/index.html)
+- [American Diabetes Association — Diabetes Basics] (https://diabetes.org/about-diabetes)
+- [American Diabetes Association — Warning Signs and Symptoms] (https://diabetes.org/about-diabetes/warning-signs-symptoms)
 """
 )
  
