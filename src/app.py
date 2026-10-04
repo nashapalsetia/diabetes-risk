@@ -58,7 +58,7 @@ with st.form("risk_form"):
             format_func=lambda x: "Yes" if x == 1 else "No",
         )
         diff_walk = st.selectbox(
-            "Do you have serious difficulty walking or climbing stairs?",
+            "Do you have trouble with physical activities like walking or climbing stairs?",
             options=[0, 1],
             format_func=lambda x: "Yes" if x == 1 else "No",
         )
