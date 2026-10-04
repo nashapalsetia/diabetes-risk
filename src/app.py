@@ -164,5 +164,5 @@ st.markdown(
 st.caption(
     "Model: Logistic Regression trained on CDC BRFSS 2015 survey data "
     "(UC Irvine Machine Learning Repository). This is a portfolio/educational "
-    "project and is not affiliated with the CDC or ADA."
+    "project and is not affiliated with the CDC or American Diabetes Association."
 )
