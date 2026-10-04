@@ -37,49 +37,74 @@ st.divider()
 
 
 # Input form
+#
+# Every widget starts blank rather than pre-selected, and `clear_on_submit` wipes
+# them again once a result is returned. Between the two, nobody using this after
+# someone else ever sees the previous person's answers.
 st.subheader("Tell us about yourself")
-with st.form("risk_form"):
+with st.form("risk_form", clear_on_submit=True):
     col1, col2 = st.columns(2)
  
     with col1:
         high_bp = st.selectbox(
             "Have you ever been diagnosed with high blood pressure?",
             options=[0, 1],
+            index=None,
+            placeholder="Select an answer",
             format_func=lambda x: "Yes" if x == 1 else "No",
         )
         high_chol = st.selectbox(
             "Have you been diagnosed with high cholesterol?",
             options=[0, 1],
+            index=None,
+            placeholder="Select an answer",
             format_func=lambda x: "Yes" if x == 1 else "No",
         )
         heart_disease = st.selectbox(
             "Have you ever been diagnosed with heart disease or had a heart attack?",
             options=[0, 1],
+            index=None,
+            placeholder="Select an answer",
             format_func=lambda x: "Yes" if x == 1 else "No",
         )
         diff_walk = st.selectbox(
             "Do you have trouble with physical activities like walking or climbing stairs?",
             options=[0, 1],
+            index=None,
+            placeholder="Select an answer",
             format_func=lambda x: "Yes" if x == 1 else "No",
         )
  
     with col2:
         bmi = st.number_input(
             "BMI (Body Mass Index)",
-            min_value=10.0, max_value=80.0, value=25.0, step=0.1,
+            min_value=10.0, max_value=80.0, value=None, step=0.1,
+            placeholder="e.g. 25.0",
             help="Don't know your BMI? weight(kg) / height(m)^2",
         )
-        gen_hlth = st.slider(
-            "General health (1 = Excellent, 5 = Poor)",
-            min_value=1, max_value=5, value=3,
+        # A slider always holds some value, so it can't show "unanswered" and
+        # would quietly submit its default on behalf of someone who skipped it.
+        # These two are the same 1-5 and 0-30 scales the model expects, just in
+        # widgets that can start empty.
+        gen_hlth = st.selectbox(
+            "How would you rate your general health?",
+            options=[1, 2, 3, 4, 5],
+            index=None,
+            placeholder="Select an answer",
+            format_func=lambda x: {
+                1: "Excellent", 2: "Very good", 3: "Good", 4: "Fair", 5: "Poor",
+            }[x],
         )
-        phys_hlth = st.slider(
+        phys_hlth = st.number_input(
             "In the past 30 days, how many days was your physical health not good?",
-            min_value=0, max_value=30, value=0,
+            min_value=0, max_value=30, value=None, step=1,
+            placeholder="0-30 days",
         )
         age_bracket = st.selectbox(
             "Age range",
             options=list(range(1, 14)),
+            index=None,
+            placeholder="Select an answer",
             format_func=lambda x: {
                 1: "18-24", 2: "25-29", 3: "30-34", 4: "35-39", 5: "40-44",
                 6: "45-49", 7: "50-54", 8: "55-59", 9: "60-64", 10: "65-69",
@@ -103,45 +128,62 @@ if submitted:
         "DiffWalk": diff_walk,
         "Age": age_bracket,
     }
- 
-    try:
-        response = requests.post(API_URL, json=payload, timeout=5)
-        response.raise_for_status()
-        result = response.json()
- 
+
+    # A skipped question arrives here as None. The API would reject that with a
+    # 422, so ask for it directly rather than surfacing a schema error.
+    unanswered = [field for field, value in payload.items() if value is None]
+
+    if unanswered:
         st.divider()
-        st.subheader("Your Result")
- 
-        label = result["predicted_label"]
-        probs = result["probabilities"]
- 
-        label_display = {
-            "non-diabetic": ("🟢", "Lower estimated risk"),
-            "pre-diabetic": ("🟡", "Elevated estimated risk"),
-            "diabetic": ("🔴", "Higher estimated risk"),
-        }
-        icon, description = label_display.get(label, ("⚪", label))
- 
-        st.markdown(f"### {icon} {description}")
-        st.caption(f"Model prediction: **{label}**")
- 
-        st.write("**Estimated probability by category:**")
-        # The API returns {label: probability}. Passing that dict of scalars to
-        # st.bar_chart directly raises "If using all scalar values, you must pass
-        # an index", so wrap it in a one-column DataFrame.
-        st.bar_chart(pd.DataFrame({"probability": probs}))
- 
-        st.info(result["disclaimer"])
- 
-    except requests.exceptions.ConnectionError:
-        st.error(
-            "Couldn't reach the prediction API. Start it from the project root "
-            "with `uvicorn src.api:app --reload`."
+        st.warning(
+            f"Please answer every question before submitting — {len(unanswered)} "
+            f"{'is' if len(unanswered) == 1 else 'are'} still blank."
         )
-    except requests.exceptions.HTTPError as e:
-        st.error(f"The API returned an error: {e}")
-    except Exception as e:
-        st.error(f"Something went wrong: {e}")
+    else:
+        try:
+            response = requests.post(API_URL, json=payload, timeout=5)
+            response.raise_for_status()
+            result = response.json()
+
+            st.divider()
+            st.subheader("Your Result")
+
+            label = result["predicted_label"]
+            probs = result["probabilities"]
+
+            label_display = {
+                "non-diabetic": ("🟢", "Lower estimated risk"),
+                "pre-diabetic": ("🟡", "Elevated estimated risk"),
+                "diabetic": ("🔴", "Higher estimated risk"),
+            }
+            icon, description = label_display.get(label, ("⚪", label))
+
+            st.markdown(f"### {icon} {description}")
+            st.caption(f"Model prediction: **{label}**")
+
+            st.write("**Estimated probability by category:**")
+            # The API returns {label: probability}. Passing that dict of scalars to
+            # st.bar_chart directly raises "If using all scalar values, you must pass
+            # an index", so wrap it in a one-column DataFrame.
+            st.bar_chart(pd.DataFrame({"probability": probs}))
+
+            st.info(result["disclaimer"])
+
+            # The form behind this result is already blank again, but the result
+            # itself is still the previous person's. This reruns the script with
+            # `submitted` False, clearing it off the screen.
+            if st.button("Clear result and start over"):
+                st.rerun()
+
+        except requests.exceptions.ConnectionError:
+            st.error(
+                "Couldn't reach the prediction API. Start it from the project root "
+                "with `uvicorn src.api:app --reload`."
+            )
+        except requests.exceptions.HTTPError as e:
+            st.error(f"The API returned an error: {e}")
+        except Exception as e:
+            st.error(f"Something went wrong: {e}")
  
 
 
