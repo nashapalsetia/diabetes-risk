@@ -136,7 +136,7 @@ if submitted:
     if unanswered:
         st.divider()
         st.warning(
-            f"Please answer every question before submitting — {len(unanswered)} "
+            f"Please answer every question before submitting. {len(unanswered)} "
             f"{'is' if len(unanswered) == 1 else 'are'} still blank."
         )
     else:
