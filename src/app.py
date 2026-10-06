@@ -156,16 +156,11 @@ if submitted:
             st.caption(f"Model prediction: **{label}**")
 
             st.write("**Estimated probability by category:**")
-            # The API returns {label: probability}. Passing that dict of scalars to
-            # st.bar_chart directly raises "If using all scalar values, you must pass
-            # an index", so wrap it in a one-column DataFrame.
+            # The API returns {label: probability} for non-diabetic, prediabetic, and diabetic labels
             st.bar_chart(pd.DataFrame({"probability": probs}))
 
             st.info(result["disclaimer"])
 
-            # The form behind this result is already blank again, but the result
-            # itself is still the previous person's. This reruns the script with
-            # `submitted` False, clearing it off the screen.
             if st.button("Clear result and start over"):
                 st.rerun()
 
