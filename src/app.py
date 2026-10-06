@@ -38,9 +38,7 @@ st.divider()
 
 # Input form
 #
-# Every widget starts blank rather than pre-selected, and `clear_on_submit` wipes
-# them again once a result is returned. Between the two, nobody using this after
-# someone else ever sees the previous person's answers.
+# Every widget starts blank rather than pre-selected for anonymity
 st.subheader("Tell us about yourself")
 with st.form("risk_form", clear_on_submit=True):
     col1, col2 = st.columns(2)
@@ -82,10 +80,7 @@ with st.form("risk_form", clear_on_submit=True):
             placeholder="e.g. 25.0",
             help="Don't know your BMI? weight(kg) / height(m)^2",
         )
-        # A slider always holds some value, so it can't show "unanswered" and
-        # would quietly submit its default on behalf of someone who skipped it.
-        # These two are the same 1-5 and 0-30 scales the model expects, just in
-        # widgets that can start empty.
+        
         gen_hlth = st.selectbox(
             "How would you rate your general health?",
             options=[1, 2, 3, 4, 5],
