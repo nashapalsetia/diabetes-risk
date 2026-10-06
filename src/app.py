@@ -124,8 +124,7 @@ if submitted:
         "Age": age_bracket,
     }
 
-    # A skipped question arrives here as None. The API would reject that with a
-    # 422, so ask for it directly rather than surfacing a schema error.
+    # Error message if user skips a question to avoid API giving 422 error
     unanswered = [field for field, value in payload.items() if value is None]
 
     if unanswered:
