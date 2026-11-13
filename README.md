@@ -1,0 +1,16 @@
+# About Diabetes
+Diabetes is a chronic condition when an individual's blood sugar (glucose) is too high, due to the pancreas no making enough insulin or the body not responding to the effects of insulin properly. Type 2 diabetes, the most common form, develops gradually and is strongly linked to lifestyle and metabolic risk factors, such as blood pressure, cholesterol, weight, and physical activity. According to the CDC, over a third of adults in the U.S. have prediabetes, and a large of the population do not know it. Prediabetes is often reversible with early changes in lifestyle, which makes awareness valuable. 
+This raises a geniune question: could a model trained on public health survey data give someone a useful, honest depiction about their risk of diabetes?
+# Why I Built This
+In his later years, my grandfather dealt with diabetes. When checking his blood sugar and using his insulin pen became difficult for him to do on his own, I began helping him through the process. That experience made me curious about the condition, specifically on how it develops and what can be done to prevent or manage it. Since type 2 diabetes is associated with lifetyle and metabolic risk factors rather than being autoimmune as type 1 diabetes is, I was interested in exploring whether the risk factors visible in health daya could meaningfully predict it.
+# What I Built
+- Cleaned and explored the CDC BRFSS 2015 health indictors dataset
+- Compared four machine learning models (Logistic Regression, Random Forest, XGBoost, KNN) across multiple rounds of debugging, tuning, and resampling
+- Selected Logistic Regression as a final model based on statistical accuracy (accuracy, precision, recall, f1, auc-roc) and clinically meaningful metrics
+- Built a REST API to serve real-time predictions
+- Built an interactive Streamlit dashboard for anonymous self-assessment of diabetes risk
+- Paired every prediction with a clear disclaimer and links to educational resources
+# Process
+1. **Exploratory Data Analysis:** Checked the ~250,000-row dataset for missing values, duplicates, and outliers (found none requiring removal), then used correlation analysis to narrow 21 raw survey features down to the 8 most predictive: *HighBP*, *HighChol*, *BMI*, *HeartDiseaseorAttack*, *GenHlth*, *PhysHlth*, *DiffWalk*, and *Age*. This is documented in 01_eda_cleaning.ipynb.
+2. **Model Engineering:** Trained and compared four models, *Logistic Regression*, *Random Forest*, *XGBoost*, and *KNN*, with class weighting to address a severe class imbalance (pre-diabetic cases make up under 2% of the data). This stage involved debugging, not just clean execution. The XGBoost configuration failed to predict the pre-diabetic class due to a parameter meant for binary classification, instead of multiclass. While the Logistic Regression tuning had the same failure, it was due to a solver that silently changes the model's internal structure for 3+ classes. All the model tunings are documented in 02_model_engineering.ipynb.
+
